@@ -1,0 +1,5 @@
+INSERT INTO certificate (id, name, description, price, duration, create_date, last_update_date) VALUES (55, 'ropejumping', 'hellofvfgbdgb', 10.00, 1, '2021-06-11T02:17Z', '2021-06-11T19:57Z');
+INSERT INTO certificate (id, name, description, price, duration, create_date, last_update_date) VALUES (56, 'diana', 'mydfvdfvmentor', 2.00, 5, '2021-06-11T02:17Z', '2021-06-11T02:17Z');
+INSERT INTO certificate (id, name, description, price, duration, create_date, last_update_date) VALUES (57, 'viktor', 'mydfvdfvmentor', 2.00, 5, '2021-06-11T02:18Z', '2021-06-11T02:18Z');
+INSERT INTO certificate (id, name, description, price, duration, create_date, last_update_date) VALUES (59, 'andrewGeniy', 'dasha delaet domashku', 100.00, 10, '2021-06-11T06:15Z', '2021-06-11T13:41Z');
+INSERT INTO certificate (id, name, description, price, duration, create_date, last_update_date) VALUES (60, 'relaxspa', 'nicjjjerelax', 200.00, 10, '2021-06-11T19:44Z', '2021-06-11T19:44Z');
