@@ -2,7 +2,6 @@ package com.epam.esm.web.impl;
 
 import com.epam.esm.exception.UpdateResourceException;
 import com.epam.esm.model.Certificate;
-import com.epam.esm.util.Utils;
 import com.epam.esm.web.CertificateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -10,7 +9,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository {
@@ -48,8 +51,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                 rs.getString("description"),
                 rs.getDouble("price"),
                 rs.getInt("duration"),
-                rs.getString("create_date"),
-                rs.getString("last_update_date")
+                LocalDateTime.parse(rs.getString("create_date")),
+                LocalDateTime.parse(rs.getString("last_update_date"))
         ));
     }
 
@@ -61,8 +64,9 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                 rs.getString("description"),
                 rs.getDouble("price"),
                 rs.getInt("duration"),
-                rs.getString("create_date"),
-                rs.getString("last_update_date")) , id);
+                LocalDateTime.parse(rs.getString("create_date")),
+                LocalDateTime.parse(rs.getString("last_update_date")))
+                , id);
     }
 
     @Override
@@ -118,8 +122,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                             rs.getString("description"),
                             rs.getDouble("price"),
                             rs.getInt("duration"),
-                            rs.getString("create_date"),
-                            rs.getString("last_update_date")
+                            LocalDateTime.parse(rs.getString("create_date")),
+                            LocalDateTime.parse(rs.getString("last_update_date"))
                     ), tagId);
     }
 

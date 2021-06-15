@@ -22,8 +22,8 @@ public class SortByDateFilter extends Filter{
         Comparator<CertificateDto> comparator = (cert1, cert2) -> {
             try {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-                Date date1 = df.parse(cert1.getCreateDate());
-                Date date2 = df.parse(cert2.getCreateDate());
+                Date date1 = df.parse(cert1.getCreateDate().toString());
+                Date date2 = df.parse(cert2.getCreateDate().toString());
                 int compareResult = date1.compareTo(date2);
                 return param.equalsIgnoreCase("desc") ? -compareResult : compareResult;
             } catch (ParseException e) {

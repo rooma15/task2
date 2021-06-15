@@ -1,9 +1,6 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.model.Certificate;
-import org.springframework.lang.NonNull;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CertificateDto {
@@ -12,12 +9,13 @@ public class CertificateDto {
     private String description;
     private Double price;
     private Integer duration;
-    private String createDate;
-    private String lastUpdateDate;
+    private LocalDateTime createDate;
+    private LocalDateTime lastUpdateDate;
     private List<TagDto> tags;
 
+
     public CertificateDto(Integer id, String name, String description, Double price,
-                          Integer duration, String createDate, String lastUpdateDate, List<TagDto> tags) {
+                          Integer duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, List<TagDto> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -60,11 +58,11 @@ public class CertificateDto {
         return duration;
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public String getLastUpdateDate() {
+    public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
@@ -92,11 +90,11 @@ public class CertificateDto {
         this.duration = duration;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public void setLastUpdateDate(String lastUpdateDate) {
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 

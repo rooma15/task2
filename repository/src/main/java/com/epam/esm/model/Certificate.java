@@ -2,7 +2,7 @@ package com.epam.esm.model;
 
 import org.springframework.lang.NonNull;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class Certificate {
     private final Integer id;
@@ -10,11 +10,11 @@ public class Certificate {
     private final String description;
     private final Double price;
     private final Integer duration;
-    private final String createDate;
-    private final String lastUpdateDate;
+    private final LocalDateTime createDate;
+    private final LocalDateTime lastUpdateDate;
 
     public Certificate(Integer id, @NonNull String name, @NonNull String description, @NonNull Double price,
-                       @NonNull Integer duration, @NonNull String createDate, @NonNull String lastUpdateDate) {
+                       @NonNull Integer duration, @NonNull LocalDateTime createDate, @NonNull LocalDateTime lastUpdateDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -44,11 +44,11 @@ public class Certificate {
         return duration;
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public String getLastUpdateDate() {
+    public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
