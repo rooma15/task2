@@ -21,6 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+
 public class CertificateServiceTest {
 
   @Mock private CertificateRepository certificateRepository;
@@ -40,11 +41,13 @@ public class CertificateServiceTest {
   Certificate cert1 =
       new Certificate(
           55, "roman", "hello roman",
-              10.00, 1, "2021-06-11T02:17Z", "2021-06-11T19:57Z");
+              10.00, 1, LocalDateTime.parse("2021-06-11T02:17Z"),
+              LocalDateTime.parse("2021-06-11T19:57Z"));
   Certificate cert2 =
       new Certificate(
           56, "andrew", "hello andrew",
-              2.00, 5, "2021-06-11T02:17Z", "2021-06-11T02:17Z");
+              2.00, 5, LocalDateTime.parse("2021-06-11T02:17Z"),
+              LocalDateTime.parse("2021-06-11T02:17Z"));
 
 
   @BeforeEach

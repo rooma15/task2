@@ -103,8 +103,6 @@ public class CertificateServiceImpl implements CertificateService {
                                     .noneMatch(distinctTag -> tag.getName().equals(distinctTag.getName())))
                     .collect(Collectors.toList());
             newTags.forEach(tagService::save);
-        } else {
-            Util.lOGGER.info("tags were null");
         }
         return distinctTags;
     }
@@ -122,7 +120,6 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate certificate = UtilCertificateConverter.convertDtoToModel(certificateDto);
         int lastId = certificateRepository.create(certificate);
         if(lastId != 0) {
-            Util.lOGGER.info("started creating links");
             List<TagDto> currentCertificateTags = distinctTags
                     .stream()
                     .map(tag -> tagService.findByTagName(tag.getName())).collect(Collectors.toList());

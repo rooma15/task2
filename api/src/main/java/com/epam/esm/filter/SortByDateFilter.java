@@ -1,7 +1,6 @@
 package com.epam.esm.filter;
 
 import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.util.Util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -17,7 +16,6 @@ public class SortByDateFilter extends Filter {
     super(param);
   }
 
-<<<<<<< HEAD
     @Override
     List<CertificateDto> filter(List<CertificateDto> soughtList) {
         Comparator<CertificateDto> comparator = (cert1, cert2) -> {
@@ -28,30 +26,9 @@ public class SortByDateFilter extends Filter {
                 int compareResult = date1.compareTo(date2);
                 return param.equalsIgnoreCase("desc") ? -compareResult : compareResult;
             } catch (ParseException e) {
-                Utils.lOGGER.info(e.getMessage());
             }
             return 0;
         };
         return soughtList.stream().sorted(comparator).collect(Collectors.toList());
     }
-=======
-  private final Comparator<CertificateDto> comparator =
-      (cert1, cert2) -> {
-        try {
-          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-          Date date1 = dateFormat.parse(cert1.getCreateDate());
-          Date date2 = dateFormat.parse(cert2.getCreateDate());
-          int compareResult = date1.compareTo(date2);
-          return param.equalsIgnoreCase("desc") ? -compareResult : compareResult;
-        } catch (ParseException e) {
-          Util.lOGGER.info(e.getMessage());
-        }
-        return 0;
-      };
-
-  @Override
-  List<CertificateDto> filter(List<CertificateDto> soughtList) {
-    return soughtList.stream().sorted(comparator).collect(Collectors.toList());
-  }
->>>>>>> testfix
 }
