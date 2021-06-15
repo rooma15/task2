@@ -1,6 +1,10 @@
 package com.epam.esm.web.exception.exceptionHandler;
 
-import com.epam.esm.exception.*;
+import com.epam.esm.exception.ApplicationException;
+import com.epam.esm.exception.DuplicateResourceException;
+import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.web.exception.ResponseError;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
-import java.util.NoSuchElementException;
 
 
 @RestControllerAdvice
@@ -24,14 +27,13 @@ public class AllExceptionHandler {
         return new ResponseError("internal server error", 500);
     }
 
-
     @ExceptionHandler(value = ValidationException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody ResponseError validationError(ApplicationException e){
         return new ResponseError(e.getMessage(), e.getErrorCode());
     }
 
-    @ExceptionHandler(value = ResourceExistenceException.class)
+    @ExceptionHandler(value = ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody ResponseError resourceDoesNotExist(ApplicationException e){
         return new ResponseError(e.getMessage(), e.getErrorCode());

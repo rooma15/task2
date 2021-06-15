@@ -1,11 +1,10 @@
 package com.epam.esm.web.impl;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.exception.ResourceExistenceException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.Tag;
 import com.epam.esm.util.UtilTagConverter;
-import com.epam.esm.util.Utils;
 import com.epam.esm.validator.Validator;
 import com.epam.esm.web.TagRepository;
 import com.epam.esm.web.TagService;
@@ -21,9 +20,7 @@ import java.util.stream.Collectors;
 @Service
 public class TagServiceImpl implements TagService {
 
-
     private final TagRepository tagRepository;
-
 
     @Autowired
     public TagServiceImpl(TagRepository tagRepository) {
@@ -40,14 +37,12 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @Transactional
-    public TagDto create(TagDto tagDto) {
-        Utils.lOGGER.info("зашел в create");
+    public TagDto save(TagDto tagDto) {
         tagDtoValidator.validate(tagDto);
-        Utils.lOGGER.info("started creating tags");
         Tag tag = UtilTagConverter.convertDtoToModel(tagDto);
         int lastId = tagRepository.create(tag);
         if(lastId != 0){
-            return retrieveOne(lastId);
+            return findById(lastId);
         }else {
             throw new ServiceException("Something went wrong while creating tag on server", 50001);
         }
@@ -56,15 +51,15 @@ public class TagServiceImpl implements TagService {
     @Override
     public boolean isResourceExist(String name) {
         try {
-            retrieveByTagName(name);
+            findByTagName(name);
             return true;
-        }catch (ResourceExistenceException e){
+        }catch (ResourceNotFoundException e){
             return false;
         }
     }
 
     @Override
-    public List<TagDto> retrieveAll() {
+    public List<TagDto> findAll() {
         return tagRepository.retrieveAll().stream()
                 .map(UtilTagConverter::convertModelToDto)
                 .collect(Collectors.toList());
@@ -76,30 +71,30 @@ public class TagServiceImpl implements TagService {
         if(isResourceExist(id)){
             return tagRepository.delete(id);
         }else {
-            throw new ResourceExistenceException("Tag with id = " + id + " does not exist", 40401);
+            throw new ResourceNotFoundException("Tag with id = " + id + " does not exist", 40401);
         }
     }
 
     @Override
-    public TagDto retrieveOne(int id) {
+    public TagDto findById(int id) {
         try {
             return UtilTagConverter.convertModelToDto(tagRepository.retrieveOne(id));
         }catch (EmptyResultDataAccessException e){
-            throw new ResourceExistenceException("Tag with id = " + id + " does not exist", 40401);
+            throw new ResourceNotFoundException("Tag with id = " + id + " does not exist", 40401);
         }
     }
 
-    public TagDto retrieveByTagName(String name){
+    public TagDto findByTagName(String name){
         try {
             return UtilTagConverter.convertModelToDto(tagRepository.retrieveByName(name));
         }catch (EmptyResultDataAccessException e){
-            throw new ResourceExistenceException("Tag with name = " + name + " does not exist", 40401);
+            throw new ResourceNotFoundException("Tag with name = " + name + " does not exist", 40401);
         }
 
     }
 
     @Override
-    public List<TagDto> retrieveTagsByCertificateId(int certId) {
+    public List<TagDto> findTagsByCertificateId(int certId) {
         return tagRepository.retrieveTagsByCertificateId(certId)
                 .stream()
                 .map(UtilTagConverter::convertModelToDto)

@@ -1,13 +1,30 @@
 package com.epam.esm.web.contoller;
+
 import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.filter.*;
+import com.epam.esm.filter.CertificateNameFilter;
+import com.epam.esm.filter.DescriptionCertificateFilter;
+import com.epam.esm.filter.FilterManager;
+import com.epam.esm.filter.SortByDateFilter;
+import com.epam.esm.filter.SortByNameFilter;
+import com.epam.esm.filter.TagNameFilter;
 import com.epam.esm.web.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import java.util.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 
 @RestController
@@ -15,7 +32,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class CertificateController {
 
     private final CertificateService certificateService;
-
 
     @Autowired
     public CertificateController(CertificateService certificateService){
@@ -30,7 +46,7 @@ public class CertificateController {
                                        @RequestParam(required = false) String sortByDate,
                                        @RequestParam(required = false) String sortByName) {
 
-        FilterManager filterManager = new FilterManager(certificateService.retrieveAll());
+        FilterManager filterManager = new FilterManager(certificateService.findAll());
 
         if(tagName != null) {
             filterManager.add(new TagNameFilter(tagName));
@@ -56,7 +72,7 @@ public class CertificateController {
     @RequestMapping(value = "/{id}", method = GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto getCertificate(@PathVariable int id){
-        return certificateService.retrieveOne(id);
+        return certificateService.findById(id);
     }
 
     @RequestMapping(value = "/{id}", method = PUT, consumes = "application/json", produces = "application/json")
@@ -70,13 +86,13 @@ public class CertificateController {
     @RequestMapping(value = "/{id}", method = PATCH, consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto updatePart(@PathVariable int id, @RequestBody HashMap<String, Object> map){
-        return certificateService.update(map, id);
+        return certificateService.partitialUpdate(map, id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = POST, consumes = "application/json", produces = "application/json")
     public CertificateDto create( @RequestBody CertificateDto certificate){
-        return certificateService.create(certificate);
+        return certificateService.save(certificate);
     }
 
     @RequestMapping(value = "/{id}",  method = DELETE)

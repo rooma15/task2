@@ -12,7 +12,6 @@ import java.util.*;
 @Component("hashMapBasedCertificateValidator")
 public class HashMapBasedCertificateValidator implements Validator<Map<String, Object>> {
 
-
     private Validator<TagDto> tagValidator;
 
     @Autowired

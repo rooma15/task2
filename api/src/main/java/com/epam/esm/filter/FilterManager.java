@@ -1,7 +1,6 @@
 package com.epam.esm.filter;
 
 import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.util.Utils;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class FilterManager {
             head = newFilter;
             current = newFilter;
         }else{
-            Utils.lOGGER.info("добавлен " + size + " фильтр!");
             current.next = newFilter;
             current = current.next;
         }

@@ -2,7 +2,7 @@ package com.epam.esm.model;
 
 import org.springframework.lang.NonNull;
 
-import java.util.List;
+import java.util.Objects;
 
 public class Certificate {
     private final Integer id;
@@ -52,4 +52,35 @@ public class Certificate {
         return lastUpdateDate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Certificate that = (Certificate) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(price, that.price) &&
+                Objects.equals(duration, that.duration) &&
+                Objects.equals(createDate, that.createDate) &&
+                Objects.equals(lastUpdateDate, that.lastUpdateDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Certificate{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", duration=" + duration +
+                ", createDate='" + createDate + '\'' +
+                ", lastUpdateDate='" + lastUpdateDate + '\'' +
+                '}';
+    }
 }

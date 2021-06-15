@@ -1,8 +1,8 @@
 package com.epam.esm.web.exception;
 
 public class ResponseError {
-    private String errorMessage;
-    private int errorCode;
+    private final String errorMessage;
+    private final int errorCode;
 
     public ResponseError(String message, int code) {
         this.errorMessage = message;
@@ -10,11 +10,11 @@ public class ResponseError {
     }
 
     public String getMessage() {
-        return errorMessage;
+        return this.errorMessage;
     }
 
     public int getCode() {
-        return errorCode;
+        return this.errorCode;
     }
 
 }

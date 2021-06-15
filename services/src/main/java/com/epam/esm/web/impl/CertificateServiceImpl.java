@@ -2,13 +2,12 @@ package com.epam.esm.web.impl;
 
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.exception.ResourceExistenceException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.exception.UpdateResourceException;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.util.Util;
 import com.epam.esm.util.UtilCertificateConverter;
-import com.epam.esm.util.Utils;
 import com.epam.esm.validator.Validator;
 import com.epam.esm.web.CertificateRepository;
 import com.epam.esm.web.CertificateService;
@@ -20,7 +19,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,7 +31,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
-
 
     private final CertificateRepository certificateRepository;
     private TagService tagService;
@@ -73,14 +75,14 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Transactional
-    public List<CertificateDto> retrieveCertificatesByTagName(String name) {
-        int tagId = tagService.retrieveByTagName(name).getId();
+    public List<CertificateDto> findByTagName(String name) {
+        int tagId = tagService.findByTagName(name).getId();
         List<Certificate> certificateModels = certificateRepository.retrieveCertificatesByTagId(tagId);
         return certificateModels
                 .stream()
                 .map(certificate -> UtilCertificateConverter
                         .convertModelToDto(certificate, tagService
-                                .retrieveTagsByCertificateId(certificate.getId())))
+                                .findTagsByCertificateId(certificate.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +94,7 @@ public class CertificateServiceImpl implements CertificateService {
             distinctTags = tagDtos.stream()
                     .filter(distinctByKey(TagDto::getName))
                     .collect(Collectors.toList());
-            List<TagDto> existingTags = tagService.retrieveAll();
+            List<TagDto> existingTags = tagService.findAll();
             List<TagDto> newTags = distinctTags
                     .stream()
                     .filter(tag ->
@@ -100,16 +102,16 @@ public class CertificateServiceImpl implements CertificateService {
                                     .stream()
                                     .noneMatch(distinctTag -> tag.getName().equals(distinctTag.getName())))
                     .collect(Collectors.toList());
-            newTags.forEach(tagService::create);
+            newTags.forEach(tagService::save);
         } else {
-            Utils.lOGGER.info("tags were null");
+            Util.lOGGER.info("tags were null");
         }
         return distinctTags;
     }
 
     @Override
     @Transactional
-    public CertificateDto create(CertificateDto certificateDto) {
+    public CertificateDto save(CertificateDto certificateDto) {
         validator.validate(certificateDto);
 
         certificateDto.setCreateDate(Util.getCurrentFormattedDate());
@@ -120,10 +122,10 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate certificate = UtilCertificateConverter.convertDtoToModel(certificateDto);
         int lastId = certificateRepository.create(certificate);
         if(lastId != 0) {
-            Utils.lOGGER.info("started creating links");
+            Util.lOGGER.info("started creating links");
             List<TagDto> currentCertificateTags = distinctTags
                     .stream()
-                    .map(tag -> tagService.retrieveByTagName(tag.getName())).collect(Collectors.toList());
+                    .map(tag -> tagService.findByTagName(tag.getName())).collect(Collectors.toList());
             currentCertificateTags.forEach(tag -> connectorRepository.makeLink(lastId, tag.getId()));
             return UtilCertificateConverter.convertModelToDto(certificateRepository.retrieveOne(lastId),
                     currentCertificateTags);
@@ -133,26 +135,25 @@ public class CertificateServiceImpl implements CertificateService {
 
     }
 
-
     @Override
     @Transactional
-    public List<CertificateDto> retrieveAll() {
+    public List<CertificateDto> findAll() {
         return certificateRepository.retrieveAll()
                 .stream()
                 .map(model -> UtilCertificateConverter
-                        .convertModelToDto(model, tagService.retrieveTagsByCertificateId(model.getId())))
+                        .convertModelToDto(model, tagService.findTagsByCertificateId(model.getId())))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public CertificateDto retrieveOne(int id) {
+    public CertificateDto findById(int id) {
         try {
             return UtilCertificateConverter
                     .convertModelToDto(certificateRepository.retrieveOne(id),
-                            tagService.retrieveTagsByCertificateId(id));
+                            tagService.findTagsByCertificateId(id));
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceExistenceException("certificate with id=[" + id + "] does not exist", 40402);
+            throw new ResourceNotFoundException("certificate with id=[" + id + "] does not exist", 40402);
         }
     }
 
@@ -163,16 +164,15 @@ public class CertificateServiceImpl implements CertificateService {
             connectorRepository.deleteLink(id);
             return certificateRepository.delete(id);
         }else{
-            throw new ResourceExistenceException("certificate with id=[" + id + "] does not exist", 40402);
+            throw new ResourceNotFoundException("certificate with id=[" + id + "] does not exist", 40402);
         }
     }
 
-
     @Override
     @Transactional
-    public CertificateDto update(Map<String, Object> inputParamsMap, int id) {
+    public CertificateDto partitialUpdate(Map<String, Object> inputParamsMap, int id) {
         List<String> columnNames = certificateRepository.getColumnNames();
-        CertificateDto certificate = retrieveOne(id);
+        CertificateDto certificate = findById(id);
         Map<String, Object> paramsMap = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         sql.append("update certificate set ");
@@ -186,7 +186,6 @@ public class CertificateServiceImpl implements CertificateService {
         paramsMap.put("last_update_date", Util.getCurrentFormattedDate());
         sql.append(" where id=:id;");
         paramsMap.put("id", id);
-        Utils.lOGGER.info(sql);
         hashMapBasedCertificateValidator.validate(paramsMap);
         List<TagDto> currentCertificateTags = new ArrayList<>();
         for(Map.Entry<String, Object> param : inputParamsMap.entrySet()) {
@@ -197,7 +196,7 @@ public class CertificateServiceImpl implements CertificateService {
                 List<TagDto> tagsToBeUpdated = createNonExistentTags(certificate);
                 currentCertificateTags = tagsToBeUpdated
                         .stream()
-                        .map(tag -> tagService.retrieveByTagName(tag.getName()))
+                        .map(tag -> tagService.findByTagName(tag.getName()))
                         .collect(Collectors.toList());
 
                 connectorRepository.deleteLink(certificate.getId());
@@ -221,11 +220,10 @@ public class CertificateServiceImpl implements CertificateService {
         List<TagDto> tagsToBeUpdated = createNonExistentTags(certificate);
         List<TagDto> currentCertificateTags = tagsToBeUpdated
                 .stream()
-                .map(tag -> tagService.retrieveByTagName(tag.getName()))
+                .map(tag -> tagService.findByTagName(tag.getName()))
                 .collect(Collectors.toList());
 
-        currentCertificateTags.forEach(tag -> Utils.lOGGER.info("current : " + tag.getName()));
-        CertificateDto existedCertificate = retrieveOne(certificate.getId());
+        CertificateDto existedCertificate = findById(certificate.getId());
         certificate.setCreateDate(existedCertificate.getCreateDate());
         certificate.setLastUpdateDate(Util.getCurrentFormattedDate());
         connectorRepository.deleteLink(certificate.getId());

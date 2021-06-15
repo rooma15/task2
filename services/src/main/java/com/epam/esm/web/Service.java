@@ -1,19 +1,18 @@
 package com.epam.esm.web;
 
-import com.epam.esm.exception.ResourceExistenceException;
+import com.epam.esm.exception.ResourceNotFoundException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public interface Service<T> {
-    T create(T EntityDto);
-    List<T> retrieveAll();
-    T retrieveOne(int id);
+    T save(T EntityDto);
+    List<T> findAll();
+    T findById(int id);
     int delete(int id);
     default boolean isResourceExist(int id){
         try{
-            retrieveOne(id);
-        }catch (ResourceExistenceException e){
+            findById(id);
+        }catch (ResourceNotFoundException e){
             return false;
         }
         return true;

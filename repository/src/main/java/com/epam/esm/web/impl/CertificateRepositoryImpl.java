@@ -2,7 +2,6 @@ package com.epam.esm.web.impl;
 
 import com.epam.esm.exception.UpdateResourceException;
 import com.epam.esm.model.Certificate;
-import com.epam.esm.util.Utils;
 import com.epam.esm.web.CertificateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
