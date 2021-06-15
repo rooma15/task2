@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface CertificateService extends Service<CertificateDto> {
-    CertificateDto update(Map<String, Object> paramsMap, int id);
+    CertificateDto partitialUpdate(Map<String, Object> paramsMap, int id);
     CertificateDto update(CertificateDto certificate);
-    List<CertificateDto> retrieveCertificatesByTagName(String name);
+    List<CertificateDto> findByTagName(String name);
 }

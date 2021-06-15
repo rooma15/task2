@@ -11,14 +11,20 @@ public class SortByNameFilter extends Filter{
         super(param);
     }
 
+    private final Comparator<CertificateDto> comparator =
+            (cert1, cert2) -> {
+        String name1 = cert1.getName();
+        String name2 = cert2.getName();
+        int compareResult = name1.compareTo(name2);
+        return param.equalsIgnoreCase("desc")
+                ? -compareResult
+                : compareResult;
+    };
+
     @Override
     List<CertificateDto> filter(List<CertificateDto> soughtList) {
-        Comparator<CertificateDto> comparator = (cert1, cert2) -> {
-            String name1 = cert1.getName();
-            String name2 = cert2.getName();
-            int compareResult = name1.compareTo(name2);
-            return param.equalsIgnoreCase("desc") ? -compareResult : compareResult;
-        };
-        return soughtList.stream().sorted(comparator).collect(Collectors.toList());
+        return soughtList.stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
     }
 }
