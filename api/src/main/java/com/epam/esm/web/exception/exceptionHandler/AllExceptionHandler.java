@@ -2,6 +2,7 @@ package com.epam.esm.web.exception.exceptionHandler;
 
 import com.epam.esm.exception.ApplicationException;
 import com.epam.esm.exception.DuplicateResourceException;
+import com.epam.esm.exception.ResourceIsUsedException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.exception.ValidationException;
@@ -14,17 +15,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
 
 
 @RestControllerAdvice
 public class AllExceptionHandler {
 
-    @ExceptionHandler(value = SQLException.class)
+    @ExceptionHandler(value = Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody
-    ResponseError exc(HttpServletResponse resp, HttpServletRequest req, Exception e){
-        return new ResponseError("internal server error", 500);
+    ResponseError generaExceptionHandler(HttpServletResponse resp, HttpServletRequest req, Exception e){
+        return new ResponseError(e.getMessage(), 500);
     }
 
     @ExceptionHandler(value = ValidationException.class)
@@ -45,7 +45,7 @@ public class AllExceptionHandler {
         return new ResponseError(e.getMessage(), e.getErrorCode());
     }
 
-    @ExceptionHandler(value = DuplicateResourceException.class)
+    @ExceptionHandler(value = {DuplicateResourceException.class, ResourceIsUsedException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public @ResponseBody ResponseError duplicateResource(ApplicationException e){
         return new ResponseError(e.getMessage(), e.getErrorCode());

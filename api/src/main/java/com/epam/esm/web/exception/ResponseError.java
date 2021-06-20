@@ -9,12 +9,19 @@ public class ResponseError {
         this.errorCode = code;
     }
 
-    public String getMessage() {
+    public String getErrorMessage() {
         return this.errorMessage;
     }
 
-    public int getCode() {
+    public int getErrorCode() {
         return this.errorCode;
     }
 
+    @Override
+    public String toString() {
+        return "ResponseError{" +
+                "errorMessage='" + errorMessage + '\'' +
+                ", errorCode=" + errorCode +
+                '}';
+    }
 }

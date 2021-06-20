@@ -19,21 +19,43 @@ public class TagController {
 
   private final TagService tagService;
 
+  /**
+   * Instantiates a new Tag controller.
+   *
+   * @param tagService the tag service
+   */
   @Autowired
   public TagController(TagService tagService) {
     this.tagService = tagService;
   }
 
+  /**
+   * Gets all tags.
+   *
+   * @return the all tags
+   */
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   public List<TagDto> getAllTags() {
-    return tagService.findAll();
+    return tagService.getAll();
   }
 
+  /**
+   * Gets tag.
+   *
+   * @param id the id
+   * @return the tag
+   */
   @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
   public TagDto getTag(@PathVariable int id) {
-    return tagService.findById(id);
+    return tagService.getById(id);
   }
 
+  /**
+   * Create tag tag dto.
+   *
+   * @param tag the tag
+   * @return the tag dto
+   */
   @RequestMapping(
       method = RequestMethod.POST,
       produces = "application/json",
@@ -42,6 +64,11 @@ public class TagController {
     return tagService.save(tag);
   }
 
+  /**
+   * Delete tag.
+   *
+   * @param id the id
+   */
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteTag(@PathVariable int id) {
